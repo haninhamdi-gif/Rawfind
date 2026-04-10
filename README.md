@@ -2,7 +2,7 @@
 
 Rawfind est une application dédiée à la recherche de matières premières
 et à l'identification des fournisseurs les plus adaptés
-en fonction de critères spécifiques définis par l'utilisateur.
+en fonction de critères spécifiques 
 
 L'objectif principal de l'application est d'aider les utilisateurs
 à sélectionner les matières premières et les fournisseurs
