@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Catalogue — RawFind Tunisia{% endblock %}
+{% block content %}
+
+<div class="search-section">
+  <div class="search-row">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="search-input" placeholder="Rechercher une matière première..." oninput="filterCards()">
+    </div>
+    <select class="filter-select" id="category-filter" onchange="filterByCategory(this.value)">
+      <option value="">📦 Toutes catégories</option>
+      <option value="Métal">🔩 Métal</option>
+      <option value="Polymère">🧪 Polymère</option>
+      <option value="Naturel">🪵 Naturel</option>
+    </select>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-header">
+    <div class="section-title">Catalogue des matières premières</div>
+    <span class="count-badge" id="material-count">{{ matieres|length }} matières</span>
+  </div>
+  <div class="grid" id="mat-grid">
+    {% for m in matieres %}
+    <a href="{{ url_for('fiche', id=m.id) }}" class="card" data-name="{{ m.nomM|lower }}" data-cat="{{ m.categorie }}">
+      <div class="card-img {% if m.categorie == 'Métal' %}metal{% elif m.categorie == 'Polymère' %}polymer{% else %}natural{% endif %}">
+        {% if m.categorie == 'Métal' %}🔩{% elif m.categorie == 'Polymère' %}🧪{% else %}🪵{% endif %}
+        <span class="avail-badge ok">Disponible</span>
+      </div>
+      <div class="card-body">
+        <div class="card-cat">{{ m.categorie }}</div>
+        <div class="card-name">{{ m.nomM }}</div>
+        <div class="card-loc"><span>{{ m.unite }}</span></div>
+        <div class="card-footer">
+          <span class="btn btn-blue btn-sm">Voir →</span>
+        </div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+
+<script>
+function filterCards() {
+  const search = document.getElementById('search-input').value.toLowerCase();
+  const category = document.getElementById('category-filter').value;
+  let visibleCount = 0;
+  
+  document.querySelectorAll('.card').forEach(card => {
+    const matchesSearch = card.dataset.name.includes(search);
+    const matchesCategory = !category || card.dataset.cat === category;
+    const isVisible = matchesSearch && matchesCategory;
+    card.style.display = isVisible ? '' : 'none';
+    if (isVisible) visibleCount++;
+  });
+  
+  document.getElementById('material-count').innerText = visibleCount + ' matière' + (visibleCount > 1 ? 's' : '');
+}
+
+function filterByCategory(cat) {
+  filterCards();
+}
+</script>
+
+{% endblock %}

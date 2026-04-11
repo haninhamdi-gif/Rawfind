@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Connexion — RawFind Tunisia{% endblock %}
+{% block content %}
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-logo">Raw<span>Find</span></div>
+    <div class="auth-title">Bienvenue 👋</div>
+    <p class="auth-sub">Connectez-vous avec votre email pour accéder à l'Analyse Comparative et aux scores qualité.</p>
+    <form method="POST" action="{{ url_for('login_page') }}">
+      <div class="form-group">
+        <label class="form-label">Adresse email</label>
+        <input class="form-input" type="email" name="email" placeholder="vous@exemple.com" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Mot de passe</label>
+        <input class="form-input" type="password" name="password" placeholder="••••••••" required>
+      </div>
+      <button type="submit" class="form-submit">Se connecter</button>
+    </form>
+    <div class="auth-switch">Pas encore de compte ? <a href="{{ url_for('register_page') }}">S'inscrire</a></div>
+  </div>
+</div>
+{% endblock %}

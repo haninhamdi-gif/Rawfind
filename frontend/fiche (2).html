@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block title %}{{ material.nomM }} — RawFind Tunisia{% endblock %}
+{% block content %}
+
+<div class="breadcrumb">
+  <a href="{{ url_for('catalogue') }}">← Catalogue</a> / {{ material.nomM }}
+</div>
+
+<div class="detail-layout">
+  <div class="detail-main">
+    <div class="detail-hero">
+      {% if material.categorie == 'Métal' %}🔩{% elif material.categorie == 'Polymère' %}🧪{% else %}🪵{% endif %}
+    </div>
+    <div class="detail-body">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+        <span style="background:#dbeafe;color:#1e40af;font-size:11px;font-weight:700;padding:2px 10px;border-radius:20px;text-transform:uppercase;">{{ material.categorie }}</span>
+      </div>
+      <div class="detail-name">{{ material.nomM }}</div>
+      <div class="detail-desc">Unité : {{ material.unite }} — {{ offers|length }} offre(s) disponible(s) en Tunisie.</div>
+
+      <div class="detail-section">
+        <h3>Offres disponibles</h3>
+        {% if offers %}
+        <table class="offers-table">
+          <thead>
+            <tr>
+              <th>Fournisseur</th>
+              <th>Ville</th>
+              <th>Prix</th>
+              <th>Qualité</th>
+              <th>Délai</th>
+              <th>Disponibilité</th>
+              <th>Lien</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for o in offers %}
+            <tr>
+              <td><strong>{{ o.nomF }}</strong></td>
+              <td>📍 {{ o.ville }}</td>
+              <td><span class="card-price">{{ o.prix }} <small>TND/{{ material.unite }}</small></span></td>
+              <td>
+                {% if session.get('user_id') %}
+                  <div class="quality-bar">
+                    <div class="quality-fill" style="width: {{ (o.qualite / 5 * 100)|int }}%;"></div>
+                    <span class="quality-num">{{ o.qualite }}/5</span>
+                  </div>
+                {% else %}
+                  <span class="lock-badge">🔒 Connexion</span>
+                {% endif %}
+              </td>
+              <td style="color:var(--muted);font-size:12px;">{{ o.delai_livraison }} jours</td>
+              <td>
+                {% if o.disponible %}
+                  <span style="color: #2d8a5a;">✅ En stock</span>
+                {% else %}
+                  <span style="color: #d94f3d;">❌ Rupture</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if o.site_web %}
+                  <a href="http://{{ o.site_web }}" target="_blank" class="btn btn-ghost btn-sm">🔗 Visiter</a>
+                {% else %}
+                  <span style="color:var(--muted);">—</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+          <p style="color:var(--muted);">Aucune offre disponible.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-card">
+      <h4>💰 Prix indicatif</h4>
+      {% if offers %}
+        <div class="price-display">{{ offers|map(attribute='prix')|min }}</div>
+        <div class="price-range">TND/{{ material.unite }} · de {{ offers|map(attribute='prix')|min }} à {{ offers|map(attribute='prix')|max }}</div>
+      {% endif %}
+      
+      {% if session.get('user_id') %}
+        <a href="{{ url_for('analyse', id=material.id) }}" class="analyze-btn">📊 Lancer l'Analyse BI</a>
+      {% else %}
+        <a href="{{ url_for('login_page') }}" class="analyze-btn" style="background:linear-gradient(135deg,#94a3b8,#64748b);">🔒 Connexion requise</a>
+      {% endif %}
+    </div>
+
+    {% if session.get('user_id') and suggestions %}
+    <div class="sidebar-card">
+      <h4>💡 Suggestions</h4>
+      {% for s in suggestions %}
+      <a href="{{ url_for('fiche', id=s.id) }}" class="suggestion-item">
+        <div class="sug-emoji">
+          {% if s.categorie == 'Métal' %}🔩{% elif s.categorie == 'Polymère' %}🧪{% else %}🪵{% endif %}
+        </div>
+        <div>
+          <div class="sug-name">{{ s.nomM }}</div>
+          <div class="sug-price">{{ s.categorie }}</div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}

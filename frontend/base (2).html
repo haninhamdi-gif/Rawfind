@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}RawFind Tunisia{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<nav class="nav">
+  <a href="{{ url_for('index') }}" class="nav-logo">Raw<span>Find</span></a>
+  <div class="nav-links">
+    <a href="{{ url_for('index') }}"     class="nav-link {% if request.endpoint == 'index' %}active{% endif %}">Accueil</a>
+    <a href="{{ url_for('catalogue') }}" class="nav-link {% if request.endpoint == 'catalogue' %}active{% endif %}">Catalogue</a>
+  </div>
+  <div class="nav-actions">
+    {% if session.get('user_id') %}
+      <span style="color:#94a3b8;font-size:13px;">{{ session.get('username') }}</span>
+      <form action="{{ url_for('logout_page') }}" method="POST" style="display:inline;">
+        <button type="submit" class="btn btn-ghost btn-sm">Déconnexion</button>
+      </form>
+    {% else %}
+      <a href="{{ url_for('login_page') }}"    class="btn btn-ghost btn-sm">Connexion</a>
+      <a href="{{ url_for('register_page') }}" class="btn btn-primary btn-sm">S'inscrire</a>
+    {% endif %}
+  </div>
+</nav>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flash-messages">
+      {% for category, message in messages %}
+        <div class="flash flash-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+{% block content %}{% endblock %}
+
+<footer>
+  <span class="footer-logo">Raw<span>Find</span></span>
+  <span class="footer-copy">© 2025 · Usage académique · AGL</span>
+</footer>
+
+</body>
+</html>
